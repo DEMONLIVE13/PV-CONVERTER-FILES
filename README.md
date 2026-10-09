@@ -69,7 +69,7 @@ Przykładowe poprawne wyniki są w `wyniki`. Raport: `RAPORT_TESTOW.md`. Dzienni
 
 ## Autorstwo, źródła i AI
 
-Autor/student: **Szymon Głogowski**. Implementacja została przygotowana z pomocą **OpenAI Codex (AI)** na podstawie załączonej instrukcji projektu. Student powinien rozumieć kod i potrafić zmienić go podczas obrony. ZIP `File_Converter-main.zip` podano jako inspirację, ale nie został odczytany z powodu limitu transferu 32 MiB; kod z niego nie był kopiowany.
+Autor/student: **Szymon Głogowski**. Implementacja została przygotowana z pomocą **OpenAI Codex (AI)** 
 
 Źródła: `projekt-1-konwerter.pdf`, wersja 5 października 2026; oficjalne dokumentacje standardowych modułów Pythona:
 - https://docs.python.org/3/library/csv.html
