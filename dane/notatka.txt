@@ -1,0 +1,3 @@
+Przykładowy tekst UTF-8: Zażółć gęślą jaźń.
+
+To drugi akapit. Konwersje TXT są zaplanowane na laboratorium 3.

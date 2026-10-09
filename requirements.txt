@@ -1,0 +1,1 @@
+# Lab 2 korzysta wyłącznie z biblioteki standardowej Python 3.10+.
