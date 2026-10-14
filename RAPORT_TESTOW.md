@@ -24,3 +24,5 @@ Doinstalowano lokalnie LibreOffice Writer 25.2.3.2 w `/workspace/lo-runtime` (be
 Odczyt obu plików przez `pdftotext` potwierdził tekst „Zażółć gęślą jaźń.” oraz „Drugi akapit: Łódź, Kraków i Warszawa.”, z poprawnymi polskimi znakami. Wszystkie osiem kierunków wykonano rzeczywiście. Nie oceniano wizualnej zgodności złożonego formatowania. Po instalacji ponownie wykonano 8 testów automatycznych — wszystkie OK.
 
 Lokalny launcher: `/workspace/lo-runtime/bin/libreoffice`; zmienna `LIBREOFFICE_PATH` wskazuje ten plik. Ze względu na izolację środowiska wykonanie LibreOffice wymagało uruchomienia poza ograniczeniami sandboxa. Lokalny runtime nie jest częścią paczki do oddania; na własnym komputerze należy zainstalować LibreOffice zgodnie z README.
+
+Po połączeniu z aktualną wersją GitHub wykonano pełen zestaw: 18 testów (8 lab. 3 i 10 wcześniejszego etapu lab. 2), wszystkie OK.
