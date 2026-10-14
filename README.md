@@ -77,7 +77,7 @@ Przykłady: `dane.csv`/`dane.json` — polskie znaki, puste pole, przecinek w wa
 - ODF: https://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html
 - LibreOffice: https://help.libreoffice.org/latest/en-US/text/shared/guide/start_parameters.html
 - Pomoc AI: kod i dokumentacja przygotowane z pomocą OpenAI Codex.
-- Autor/student: do uzupełnienia. Przed obroną należy rozumieć rejestr, strukturę JSON, obsługę procesu i ograniczenia formatów.
+- Autor/student: **Szymon Głogowski**. Przed obroną należy rozumieć rejestr, strukturę JSON, obsługę procesu i ograniczenia formatów.
 
 ## Dziennik zmian
 
@@ -87,3 +87,10 @@ W środowisku tego czatu LibreOffice jest już dostępny przez launcher
 `/workspace/lo-runtime/bin/libreoffice` (ustaw `LIBREOFFICE_PATH` na tę ścieżkę).
 Przykładowe wyniki PDF dołączono do `examples/wyniki`: `tekst.pdf` pochodzi z DOCX,
 `tekst_1.pdf` z ODT. Lokalny runtime pozostaje poza paczką projektu.
+
+## Zgodność z wcześniejszym lab. 2
+
+Wcześniejszy moduł `konwerter`, dane w `dane` i wyniki w `wyniki` pozostawiono.
+Dla etapu lab. 3 używaj poleceń `python -m converter` opisanych wyżej.
+Moduł `konwerter` zachowuje dotychczasowe CLI i obsługuje wyłącznie CSV/JSON.
+Raport wcześniejszego etapu jest w `RAPORT_TESTOW_LAB2.md`.
