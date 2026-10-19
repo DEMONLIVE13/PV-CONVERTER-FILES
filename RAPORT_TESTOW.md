@@ -1,28 +1,25 @@
-# Raport testów — 2026-10-14
+# Raport testów — 2026-10-19
 
 Polecenie: `python -m unittest discover -s tests -v`.
-Wynik: 8 testów, wszystkie OK.
+Wynik: 18 testów, wszystkie OK, po usunięciu starego modułu testy używają `converter`.
 
-| Test | Wynik |
-|---|---|
-| CSV → JSON → CSV, UTF-8, puste wartości, przecinki, konflikt nazwy | OK |
-| Niepoprawny JSON, różne klucze, null, powtórzony klucz | Kontrolowany błąd |
-| Powtórzone nagłówki CSV, brak pól, brak rekordów | Kontrolowany błąd |
-| TXT → DOCX → TXT, polskie znaki i puste akapity | Treść identyczna |
-| TXT → ODT → TXT, spacje, tabulatory, polskie znaki | Treść identyczna |
-| Brak wejścia, katalogu, nieobsługiwana para, formaty dla TXT | OK |
-| Brak LibreOffice przez nieistniejącą ścieżkę konfiguracji | Czytelny błąd |
-| Kod procesu 7, brak PDF mimo kodu 0, timeout | Kontrolowane błędy; shell=False |
+Sprawdzono automatycznie:
+- CSV/JSON: kolejność kolumn, polskie znaki, puste wartości, BOM, wielkie rozszerzenia, przecinki i wielowierszowe pola.
+- Błędne dane CSV/JSON, nieprawidłowe UTF-8 i kontrolowane komunikaty.
+- TXT → DOCX → TXT oraz TXT → ODT → TXT: zachowanie treści i pustych akapitów.
+- Walidację ścieżek, nieobsługiwane pary i bezpieczne nazwy bez nadpisywania.
+- Brak LibreOffice przez nieistniejącą ścieżkę konfiguracji.
+- Symulowane błędy procesu: kod 7, brak PDF mimo kodu 0, timeout; jawne `shell=False`.
 
-## Rzeczywiste konwersje PDF
+## Rzeczywiste konwersje
 
-Doinstalowano lokalnie LibreOffice Writer 25.2.3.2 w `/workspace/lo-runtime` (bez zmian katalogów systemowych). Wykonano przez CLI projektu:
+Python 3 i python-docx 1.2.0; LibreOfficeDev 26.8.0.0.alpha0 dostępny w PATH jako `soffice`.
+Wykonano wszystkie osiem kierunków na danych z `examples` w katalogu tymczasowym:
 
-- DOCX → PDF: `examples/wyniki/tekst.pdf` — kod procesu 0, poprawny PDF.
-- ODT → PDF: `examples/wyniki/tekst_1.pdf` — kod procesu 0, poprawny PDF.
+- CSV → JSON: dane zgodne z przykładowym JSON; JSON → CSV: poprawny zapis.
+- TXT → DOCX → TXT i TXT → ODT → TXT: identyczna treść wejściowa i wynikowa.
+- DOCX → PDF: 11365 bajtów; ODT → PDF: 16255 bajtów.
+- Odczyt obu PDF przez `pdftotext` potwierdził polskie znaki i treść akapitów.
+- Błędny JSON przez CLI: kod zakończenia 1, komunikat z linią i kolumną, brak pliku wynikowego.
 
-Odczyt obu plików przez `pdftotext` potwierdził tekst „Zażółć gęślą jaźń.” oraz „Drugi akapit: Łódź, Kraków i Warszawa.”, z poprawnymi polskimi znakami. Wszystkie osiem kierunków wykonano rzeczywiście. Nie oceniano wizualnej zgodności złożonego formatowania. Po instalacji ponownie wykonano 8 testów automatycznych — wszystkie OK.
-
-Lokalny launcher: `/workspace/lo-runtime/bin/libreoffice`; zmienna `LIBREOFFICE_PATH` wskazuje ten plik. Ze względu na izolację środowiska wykonanie LibreOffice wymagało uruchomienia poza ograniczeniami sandboxa. Lokalny runtime nie jest częścią paczki do oddania; na własnym komputerze należy zainstalować LibreOffice zgodnie z README.
-
-Po połączeniu z aktualną wersją GitHub wykonano pełen zestaw: 18 testów (8 lab. 3 i 10 wcześniejszego etapu lab. 2), wszystkie OK.
+Wyniki generowane są podczas pracy i nie należą do kodu źródłowego. Nie oceniano wizualnej zgodności złożonego formatowania. Windows i macOS nie były testowane.

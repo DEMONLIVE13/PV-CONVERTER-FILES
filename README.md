@@ -51,7 +51,7 @@ Brak programu daje kontrolowany błąd i kod zakończenia 1.
 Tekst: UTF-8, na wejściu dopuszczalny BOM. Kolejność kolumn pochodzi z nagłówka CSV lub pierwszego obiektu JSON. Puste wartości to `""`; null, liczby, listy i obiekty jako wartości są odrzucane. CSV bez rekordów jest odrzucany, ponieważ pusta lista JSON nie zachowałaby nagłówków.
 Katalog wyjściowy musi istnieć. Konflikt nazw daje bezpieczny przyrostek `_1`, `_2` itd.; istniejące pliki nie są nadpisywane.
 
-## Architektura i obrona
+## Architektura
 
 `converter/core.py`: rejestr dekoratorów, konwertery, walidacja, wyjątek `ConversionError`.
 `converter/__main__.py`: argumenty CLI i komunikaty. `available_targets()` udostępnia dozwolone formaty przyszłemu GUI.
@@ -82,15 +82,3 @@ Przykłady: `dane.csv`/`dane.json` — polskie znaki, puste pole, przecinek w wa
 ## Dziennik zmian
 
 2026-10-14: implementacja etapu lab. 2 (CSV/JSON) i lab. 3 (DOCX/ODT/PDF), CLI, przykłady i testy. Zapis rzeczywistych prac, nie historia wcześniejszych zajęć.
-
-W środowisku tego czatu LibreOffice jest już dostępny przez launcher
-`/workspace/lo-runtime/bin/libreoffice` (ustaw `LIBREOFFICE_PATH` na tę ścieżkę).
-Przykładowe wyniki PDF dołączono do `examples/wyniki`: `tekst.pdf` pochodzi z DOCX,
-`tekst_1.pdf` z ODT. Lokalny runtime pozostaje poza paczką projektu.
-
-## Zgodność z wcześniejszym lab. 2
-
-Wcześniejszy moduł `konwerter`, dane w `dane` i wyniki w `wyniki` pozostawiono.
-Dla etapu lab. 3 używaj poleceń `python -m converter` opisanych wyżej.
-Moduł `konwerter` zachowuje dotychczasowe CLI i obsługuje wyłącznie CSV/JSON.
-Raport wcześniejszego etapu jest w `RAPORT_TESTOW_LAB2.md`.

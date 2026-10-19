@@ -15,3 +15,9 @@ To dziennik jednego etapu, nie historia pracy nad całym projektem. Kolejne labo
 Dodano moduł `converter` z obsługą DOCX, ODT i PDF oraz CSV/JSON,
 przykłady, osiem testów i raport rzeczywistych konwersji PDF przez LibreOffice.
 Zachowano wcześniejszy moduł lab. 2 i jego testy. GUI pozostaje na lab. 4.
+
+## 2026-10-19 — weryfikacja lab. 3 i porządki
+
+Usunięto starszy moduł konwerter, zdublowane dane i wygenerowane wyniki.
+Przeniesiono testy CSV/JSON do wspólnego modułu converter i zachowano ostrą walidację CSV, nagłówków i komunikaty o błędnym JSON oraz UTF-8.
+Usunięto nieaktualną ścieżkę runtime z README.

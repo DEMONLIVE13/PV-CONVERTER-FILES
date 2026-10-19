@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from konwerter.core import ConversionError, ConversionRequest, available_targets, execute
+from converter.core import ConversionError, available_targets, execute
 
 
 class ConverterTests(unittest.TestCase):
@@ -19,7 +19,7 @@ class ConverterTests(unittest.TestCase):
         return path
 
     def convert(self, source, target):
-        return execute(ConversionRequest(source, target, self.root))
+        return execute(source, target, self.root)
 
     def test_round_trip_polish_empty_quotes_and_multiline(self):
         content = 'imię,kod,uwagi\nŁukasz,0012,"kawa, herbata"\nZośka,,"dwa\nakapity"\n'
@@ -69,17 +69,17 @@ class ConverterTests(unittest.TestCase):
 
     def test_missing_file_directory_and_unsupported_pair(self):
         source = self.source('a.csv', 'x\na\n')
-        requests = [ConversionRequest(self.root / 'missing.csv', 'json', self.root),
-                    ConversionRequest(source, 'json', self.root / 'missing'),
-                    ConversionRequest(source, 'pdf', self.root)]
+        requests = [(self.root / 'missing.csv', 'json', self.root),
+                    (source, 'json', self.root / 'missing'),
+                    (source, 'pdf', self.root)]
         for request in requests:
             with self.subTest(request=request), self.assertRaises(ConversionError):
-                execute(request)
+                execute(*request)
 
     def test_available_targets(self):
         self.assertEqual(available_targets(Path('a.CSV')), ['.json'])
         self.assertEqual(available_targets(Path('a.json')), ['.csv'])
-        self.assertEqual(available_targets(Path('a.txt')), [])
+        self.assertEqual(available_targets(Path('a.txt')), ['.docx', '.odt'])
 
     def test_invalid_encoding(self):
         source = self.root / 'a.csv'

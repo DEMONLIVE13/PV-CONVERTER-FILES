@@ -30,9 +30,9 @@ def available_targets(source):
 @converter('.csv', '.json')
 def csv_to_json(source, target):
     with source.open(encoding='utf-8-sig', newline='') as stream:
-        reader = csv.DictReader(stream)
+        reader = csv.DictReader(stream, strict=True)
         headers = reader.fieldnames
-        if not headers or any(not h for h in headers) or len(set(headers)) != len(headers):
+        if not headers or any(not h.strip() for h in headers) or len(set(headers)) != len(headers):
             raise ConversionError('CSV musi mieć niepuste, unikalne nagłówki.')
         rows = list(reader)
         if any(None in row or None in row.values() for row in rows):
@@ -51,18 +51,21 @@ def json_to_csv(source, target):
                 raise ConversionError('JSON zawiera powtórzony klucz.')
             result[key] = value
         return result
-    rows = json.loads(source.read_text(encoding='utf-8-sig'), object_pairs_hook=unique_object)
+    try:
+        rows = json.loads(source.read_text(encoding='utf-8-sig'), object_pairs_hook=unique_object)
+    except json.JSONDecodeError as error:
+        raise ConversionError(f'Błędny JSON: linia {error.lineno}, kolumna {error.colno}. Popraw składnię pliku.') from error
     if not isinstance(rows, list) or not rows or any(not isinstance(row, dict) or not row for row in rows):
         raise ConversionError('JSON musi być niepustą listą niepustych obiektów.')
     headers = list(rows[0])
-    if any(not h for h in headers):
+    if any(not h.strip() for h in headers):
         raise ConversionError('Nazwy kolumn nie mogą być puste.')
     if any(set(row) != set(headers) for row in rows):
         raise ConversionError('Wszystkie rekordy JSON muszą mieć te same klucze.')
     if any(not isinstance(value, str) for row in rows for value in row.values()):
         raise ConversionError('Wartości JSON muszą być tekstem; puste pole zapisuj jako "".')
     with target.open('w', encoding='utf-8', newline='') as stream:
-        writer = csv.DictWriter(stream, fieldnames=headers)
+        writer = csv.DictWriter(stream, fieldnames=headers, lineterminator='\n')
         writer.writeheader()
         writer.writerows(rows)
 
@@ -210,6 +213,10 @@ def execute(source, target_format, output_dir):
             return target
     except ConversionError:
         raise
+    except UnicodeError as error:
+        raise ConversionError('Niepoprawne kodowanie. Zapisz plik wejściowy jako UTF-8.') from error
+    except csv.Error as error:
+        raise ConversionError(f'Błędny CSV: {error}. Sprawdź cudzysłowy i separator przecinek.') from error
     except subprocess.TimeoutExpired as error:
         raise ConversionError('LibreOffice przekroczył limit 60 sekund.') from error
     except Exception as error:
