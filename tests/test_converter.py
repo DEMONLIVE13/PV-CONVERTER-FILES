@@ -18,10 +18,10 @@ class Tests(unittest.TestCase):
     def test_csv_json(self):
         p = self.file('a.csv', 'imię,uwagi\nŁukasz,\nŻaneta,"a,b"\n')
         j = execute(p, 'json', self.root)
-        self.assertEqual(json.loads(j.read_text())[0], {'imię':'Łukasz','uwagi':''})
+        self.assertEqual(json.loads(j.read_text(encoding='utf-8'))[0], {'imię':'Łukasz','uwagi':''})
         c = execute(j, 'csv', self.root)
         self.assertEqual(c.name, 'a_1.csv')
-        self.assertEqual(json.loads(execute(c, 'json', self.root).read_text()), json.loads(j.read_text()))
+        self.assertEqual(json.loads(execute(c, 'json', self.root).read_text(encoding='utf-8')), json.loads(j.read_text(encoding='utf-8')))
     def test_invalid_json(self):
         for text in ['{', '[{"a":"1"},{"b":"2"}]', '[{"a":null}]', '[{"a":"1","a":"2"}]']:
             with self.assertRaises(ConversionError):
@@ -32,10 +32,10 @@ class Tests(unittest.TestCase):
                 execute(self.file('bad.csv', text), 'json', self.root)
     def test_docx(self):
         p = self.file('a.txt', 'Zażółć gęślą jaźń.\n\nAkapit.\n')
-        self.assertEqual(execute(execute(p,'docx',self.root),'txt',self.root).read_text(), p.read_text())
+        self.assertEqual(execute(execute(p,'docx',self.root),'txt',self.root).read_text(encoding='utf-8'), p.read_text(encoding='utf-8'))
     def test_odt(self):
         p = self.file('a.txt', 'Łódź  i\tKraków\n\nAkapit.\n')
-        self.assertEqual(execute(execute(p,'odt',self.root),'txt',self.root).read_text(), p.read_text())
+        self.assertEqual(execute(execute(p,'odt',self.root),'txt',self.root).read_text(encoding='utf-8'), p.read_text(encoding='utf-8'))
     def test_validation(self):
         p = self.file('a.TXT', 'tekst')
         self.assertEqual(available_targets(p), ['.docx','.odt'])
