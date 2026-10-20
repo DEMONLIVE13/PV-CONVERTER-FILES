@@ -1,6 +1,6 @@
-# Uniwersalny konwerter — do lab. 3
+# Uniwersalny konwerter — do lab. 4
 
-Projekt obejmuje lab. 2 i 3 z dostarczonego PDF. Wersja konsolowa; GUI Tkinter jest etapem lab. 4.
+Projekt obejmuje lab. 2–4: konwertery danych i dokumentów oraz interfejs Tkinter/ttk.
 
 ## Instalacja
 
@@ -35,6 +35,35 @@ Można ustawić `LIBREOFFICE_PATH` na pełną ścieżkę do soffice/soffice.com.
 PowerShell: `$env:LIBREOFFICE_PATH = 'C:\Program Files\LibreOffice\program\soffice.com'`.
 Brak programu daje kontrolowany błąd i kod zakończenia 1.
 
+## Interfejs graficzny — Lab. 4
+
+Uruchomienie (także z CMD w Windows):
+
+```sh
+python -m converter
+```
+
+Można również użyć `python -m converter --gui`. Dotychczasowe komendy CLI nadal działają.
+Wybierz plik, istniejący katalog zapisu i format z listy, a następnie kliknij **Konwertuj**.
+Lista formatów korzysta z rejestru i pokazuje wyłącznie dozwolone kierunki dla rozszerzenia wejścia.
+Przycisk jest zablokowany, dopóki wybory nie są poprawne. Konwersja działa w osobnym wątku;
+interfejs pokazuje postęp, wynik lub czytelny błąd. Podczas pracy wybory są zablokowane.
+Istniejące pliki nie są nadpisywane — wynik dostaje przyrostek `_1`, `_2` itd.
+
+Tkinter jest składnikiem standardowej instalacji Pythona w Windows (opcja Tcl/Tk).
+Na Linux może wymagać pakietu `python3-tk`. GUI wymaga środowiska graficznego.
+PDF wymaga zainstalowanego LibreOffice, tak samo jak w CLI. W CMD można ustawić:
+
+```bat
+set "LIBREOFFICE_PATH=C:\Program Files\LibreOffice\program\soffice.com"
+python -m converter
+```
+
+Do pokazu lab. 4: wybierz `examples/dane.csv`, sprawdź, że lista zawiera tylko `.json`,
+wykonaj konwersję i otwórz wynik we wskazanym katalogu. Powtórz operację, aby zobaczyć
+bezpieczny przyrostek nazwy. Wybierz `examples/tekst.txt`, aby pokazać zmianę listy na
+`.docx` i `.odt`. `examples/bledny.json` pozwala pokazać kontrolowany błąd.
+
 ## Macierz formatów
 
 | Wejście | Wyjście | Ograniczenia |
@@ -54,7 +83,7 @@ Katalog wyjściowy musi istnieć. Konflikt nazw daje bezpieczny przyrostek `_1`,
 ## Architektura
 
 `converter/core.py`: rejestr dekoratorów, konwertery, walidacja, wyjątek `ConversionError`.
-`converter/__main__.py`: argumenty CLI i komunikaty. `available_targets()` udostępnia dozwolone formaty przyszłemu GUI.
+`converter/__main__.py`: argumenty CLI i komunikaty. `converter/gui.py`: okno Tkinter/ttk korzystające z `available_targets()` i `execute()`; kolejka przekazuje wynik z wątku roboczego do głównego wątku GUI.
 Dodanie kierunku: funkcja z dekoratorem `@converter('.wejście', '.wyjście')`.
 DOCX obsługuje python-docx, ODT standardowe ZIP/XML, dane standardowe csv/json.
 
@@ -73,6 +102,7 @@ staje się akapitem dokumentu.
 
 - Zakres: dostarczony `projekt-1-konwerter.pdf`.
 - Python: https://docs.python.org/3/library/csv.html, https://docs.python.org/3/library/json.html, https://docs.python.org/3/library/subprocess.html
+- Tkinter: https://docs.python.org/3/library/tkinter.html
 - python-docx: https://python-docx.readthedocs.io/
 - ODF: https://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html
 - LibreOffice: https://help.libreoffice.org/latest/en-US/text/shared/guide/start_parameters.html

@@ -4,12 +4,21 @@ from .core import ConversionError, REGISTRY, execute
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Uniwersalny konwerter — lab. 2–3')
+    parser = argparse.ArgumentParser(description='Uniwersalny konwerter — lab. 2–4')
     parser.add_argument('source', nargs='?', help='Plik wejściowy')
     parser.add_argument('format', nargs='?', help='Format docelowy, np. json')
     parser.add_argument('-o', '--output-dir', default='.', help='Istniejący katalog docelowy')
+    parser.add_argument('--gui', action='store_true', help='Uruchom interfejs graficzny')
     parser.add_argument('--list', action='store_true', help='Lista wspieranych par')
     args = parser.parse_args()
+    if args.gui or len(sys.argv) == 1:
+        try:
+            from .gui import main as gui_main
+        except ImportError:
+            print('Brak Tkinter. Windows: zmodyfikuj instalację Pythona i włącz Tcl/Tk. Linux: zainstaluj python3-tk.', file=sys.stderr)
+            return 1
+        gui_main()
+        return 0
     if args.list:
         for source, target in sorted(REGISTRY):
             print(f'{source} → {target}')
