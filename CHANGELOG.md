@@ -23,3 +23,5 @@ Przeniesiono testy CSV/JSON do wspólnego modułu converter i zachowano ostrą w
 Usunięto nieaktualną ścieżkę runtime z README.
 
 2026-10-20: próby T1–T8 z rzeczywistym LibreOffice, pliki dowodowe i odczyt PDF; walidacja uszkodzonego DOCX/ODT, obsługa błędu uruchamiania, 20 testów.
+
+2026-10-20: uproszczono pakiet na życzenie użytkownika — usunięto testy, raport, skrypt demonstracyjny i wygenerowane dowody. Pozostawiono konwertery, przykładowe wejścia oraz dokumentację.

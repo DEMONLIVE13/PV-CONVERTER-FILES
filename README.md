@@ -31,8 +31,8 @@ python -m converter wyniki/tekst.odt pdf -o wyniki
 ```
 
 Program szuka LibreOffice w PATH i typowych lokalizacjach Windows/macOS.
-Można ustawić `LIBREOFFICE_PATH` na pełną ścieżkę do soffice/soffice.exe.
-PowerShell: `$env:LIBREOFFICE_PATH = 'C:\Program Files\LibreOffice\program\soffice.exe'`.
+Można ustawić `LIBREOFFICE_PATH` na pełną ścieżkę do soffice/soffice.com.
+PowerShell: `$env:LIBREOFFICE_PATH = 'C:\Program Files\LibreOffice\program\soffice.com'`.
 Brak programu daje kontrolowany błąd i kod zakończenia 1.
 
 ## Macierz formatów
@@ -60,14 +60,14 @@ DOCX obsługuje python-docx, ODT standardowe ZIP/XML, dane standardowe csv/json.
 
 Proces PDF: wykrycie programu, osobny profil LibreOffice, lista argumentów w `subprocess.run`, `shell=False`, limit 60 s, sprawdzenie kodu zakończenia, istnienia i nagłówka PDF. Konwersja odbywa się w katalogu tymczasowym przed bezpiecznym zapisaniem wyniku.
 
-## Testy
+## Dane przykładowe
 
-```sh
-python -m unittest discover -s tests -v
-python -m converter examples/bledny.json csv -o wyniki
-```
+`examples/dane.csv` i `examples/dane.json`: polskie znaki, puste pole i przecinek w wartości.
+`examples/tekst.txt`: tekst z polskimi znakami oraz pustym akapitem.
+`examples/bledny.json`: niepoprawny JSON do sprawdzenia komunikatu błędu.
 
-Przykłady: `dane.csv`/`dane.json` — polskie znaki, puste pole, przecinek w wartości; `tekst.txt` — dwa niepuste akapity i pusty między nimi; `bledny.json` — kontrolowany błąd bez wyniku. Oczekiwany wynik CSV/JSON to te same dane i kolejność kolumn, TXT/DOCX/ODT — ta sama treść po powrocie do TXT. Wyniki testów: `RAPORT_TESTOW.md`.
+Reguła akapitów TXT: podział po `\n`; każda część, również pusta i końcowa,
+staje się akapitem dokumentu.
 
 ## Źródła i autorstwo
 
@@ -81,22 +81,4 @@ Przykłady: `dane.csv`/`dane.json` — polskie znaki, puste pole, przecinek w wa
 
 ## Dziennik zmian
 
-2026-10-14: implementacja etapu lab. 2 (CSV/JSON) i lab. 3 (DOCX/ODT/PDF), CLI, przykłady i testy. Zapis rzeczywistych prac, nie historia wcześniejszych zajęć.
-
-## Weryfikacja kamienia milowego 2 (Lab. 3)
-
-Wymagane cztery kierunki: CSV → JSON, JSON → CSV, TXT → DOCX i DOCX → PDF.
-Dowody rzeczywistych prób T1–T8: `dowody_lab3/`, raport: `RAPORT_TESTOW.md`.
-Dokument PDF został utworzony przez LibreOffice i odczytany przez Poppler pdftotext.
-
-Odtworzenie prób: `python demo_lab3.py`. Skrypt wymaga pustego katalogu
-`dowody_lab3` (przenieś wcześniejsze dowody), zainstalowanego LibreOffice i
-`pdftotext` w PATH. Poppler jest zależnością wyłącznie weryfikacji PDF,
-nie samego konwertera. Ubuntu/Debian: pakiety `libreoffice-writer` i `poppler-utils`.
-Windows: zainstaluj LibreOffice; do automatycznej weryfikacji doinstaluj Poppler
-z `pdftotext` w PATH, albo sprawdź treść PDF ręcznie w czytniku.
-W Windows można wskazać konsolowy `C:\Program Files\LibreOffice\program\soffice.com`.
-
-Reguła akapitów: podział TXT po `\n`; każda część, również pusta i końcowa,
-staje się akapitem. Pozwala to odtworzyć końcowy znak nowej linii przy DOCX → TXT.
-AI (OpenAI Codex): pomoc przy implementacji, walidacji procesu, testach oraz raporcie.
+2026-10-14: implementacja etapu lab. 2 (CSV/JSON) i lab. 3 (DOCX/ODT/PDF), CLI i przykłady. Zapis rzeczywistych prac, nie historia wcześniejszych zajęć.
