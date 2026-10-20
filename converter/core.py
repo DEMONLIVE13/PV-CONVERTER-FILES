@@ -153,6 +153,7 @@ def find_libreoffice():
     configured = os.environ.get('LIBREOFFICE_PATH')
     candidates = [configured] if configured else [
         'libreoffice', 'soffice', '/Applications/LibreOffice.app/Contents/MacOS/soffice',
+        r'C:\Program Files\LibreOffice\program\soffice.com',
         r'C:\Program Files\LibreOffice\program\soffice.exe',
         r'C:\Program Files (x86)\LibreOffice\program\soffice.exe']
     for candidate in candidates:
@@ -166,12 +167,23 @@ def find_libreoffice():
 @converter('.odt', '.pdf')
 def office_to_pdf(source, target):
     executable = find_libreoffice()
+    # LibreOffice potrafi potraktować tekst nazwany .docx jako zwykły tekst.
+    # Odrzuć taki plik, zanim narzędzie wygeneruje pozornie poprawny PDF.
+    try:
+        with zipfile.ZipFile(source) as archive:
+            required = 'word/document.xml' if source.suffix.lower() == '.docx' else 'content.xml'
+            ET.fromstring(archive.read(required))
+    except (zipfile.BadZipFile, KeyError, ET.ParseError) as error:
+        raise ConversionError('Uszkodzony DOCX/ODT. Otwórz dokument w edytorze i zapisz go ponownie.') from error
     with tempfile.TemporaryDirectory() as directory:
         work = Path(directory)
-        result = subprocess.run([
-            executable, f'-env:UserInstallation={(work / "profile").as_uri()}',
-            '--headless', '--convert-to', 'pdf', '--outdir', str(work), str(source.resolve())
-        ], capture_output=True, text=True, timeout=60, shell=False)
+        try:
+            result = subprocess.run([
+                executable, f'-env:UserInstallation={(work / "profile").as_uri()}',
+                '--headless', '--convert-to', 'pdf', '--outdir', str(work), str(source.resolve())
+            ], capture_output=True, text=True, errors='replace', timeout=60, shell=False)
+        except OSError as error:
+            raise ConversionError('Nie można uruchomić LibreOffice. Sprawdź LIBREOFFICE_PATH i uprawnienia do uruchamiania.') from error
         if result.returncode != 0:
             raise ConversionError(f'LibreOffice zakończył się kodem {result.returncode}: {result.stderr.strip() or result.stdout.strip()}')
         pdf = work / (source.stem + '.pdf')

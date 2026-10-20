@@ -21,3 +21,5 @@ Zachowano wcześniejszy moduł lab. 2 i jego testy. GUI pozostaje na lab. 4.
 Usunięto starszy moduł konwerter, zdublowane dane i wygenerowane wyniki.
 Przeniesiono testy CSV/JSON do wspólnego modułu converter i zachowano ostrą walidację CSV, nagłówków i komunikaty o błędnym JSON oraz UTF-8.
 Usunięto nieaktualną ścieżkę runtime z README.
+
+2026-10-20: próby T1–T8 z rzeczywistym LibreOffice, pliki dowodowe i odczyt PDF; walidacja uszkodzonego DOCX/ODT, obsługa błędu uruchamiania, 20 testów.

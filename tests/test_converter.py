@@ -48,7 +48,7 @@ class Tests(unittest.TestCase):
     @patch('converter.core.find_libreoffice', return_value='soffice')
     @patch('converter.core.subprocess.run')
     def test_process(self, run, find):
-        p = self.file('a.odt','test')
+        p = execute(self.file('a.txt', 'Zażółć gęślą jaźń'), 'odt', self.root)
         run.return_value = subprocess.CompletedProcess([],7,'','awaria')
         with self.assertRaisesRegex(ConversionError,'kodem 7'): execute(p,'pdf',self.root)
         self.assertFalse(run.call_args.kwargs['shell'])
@@ -56,3 +56,15 @@ class Tests(unittest.TestCase):
         with self.assertRaisesRegex(ConversionError,'nie utworzył'): execute(p,'pdf',self.root)
         run.side_effect = subprocess.TimeoutExpired('soffice',60)
         with self.assertRaisesRegex(ConversionError,'60 sekund'): execute(p,'pdf',self.root)
+
+    def test_corrupt_document(self):
+        with patch('converter.core.find_libreoffice', return_value='soffice'):
+            with self.assertRaisesRegex(ConversionError, 'Uszkodzony'):
+                execute(self.file('broken.docx', 'zwykły tekst'), 'pdf', self.root)
+
+    @patch('converter.core.find_libreoffice', return_value='soffice')
+    @patch('converter.core.subprocess.run', side_effect=PermissionError('odmowa'))
+    def test_cannot_launch(self, run, find):
+        source = execute(self.file('a.txt', 'tekst'), 'docx', self.root)
+        with self.assertRaisesRegex(ConversionError, 'uprawnienia'):
+            execute(source, 'pdf', self.root)
