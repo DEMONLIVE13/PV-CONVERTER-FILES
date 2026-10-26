@@ -40,3 +40,14 @@ Usunięto nieaktualną ścieżkę runtime z README.
 
 To wpis rzeczywiście wykonanej weryfikacji. Starsze wpisy zachowano z wejściowego ZIP-a;
 nie odtwarzano fikcyjnych commitów ani nie potwierdzano terminowości wcześniejszych laboratoriów.
+
+## 2026-10-26 — uporządkowanie pakietu według PDF
+
+- Przeniesiono raport i przewodnik obrony do docs/; README zawiera kompletną
+  instrukcję, macierz par, ograniczenia, oczekiwane wyniki i źródła.
+- Usunięto osobną tabelę zgodności dublującą README oraz surowe logi testów.
+- Ograniczono dowody do JSON, DOCX, ODT i dwóch PDF; usunięto kopie wejść
+  oraz tekstowe zrzuty PDF. Nazwy PDF wskazują format źródłowy.
+- Uporządkowano nazwy modułów testowych i usunięto cztery powtarzające się
+  przypadki; pozostałe 24 testy przeszły bez pominięć, w tym GUI i PDF.
+- Rozszerzono .gitignore o logi i pliki systemowe. Historia Git została zachowana.

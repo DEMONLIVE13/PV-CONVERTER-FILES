@@ -6,3 +6,9 @@ venv/
 .pytest_cache/
 /wyniki/
 /examples/wyniki/
+
+# Lokalne logi i pliki systemowe
+*.log
+/testy-*.txt
+.DS_Store
+Thumbs.db

@@ -2,7 +2,6 @@
 import builtins
 import logging
 from pathlib import Path
-import os
 import shutil
 import subprocess
 import sys
