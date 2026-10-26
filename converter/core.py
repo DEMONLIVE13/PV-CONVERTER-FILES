@@ -1,3 +1,5 @@
+import logging
+from time import perf_counter
 import csv
 import json
 import os
@@ -13,6 +15,8 @@ class ConversionError(Exception):
     """Błąd, który można bezpiecznie pokazać użytkownikowi."""
 
 
+LOGGER = logging.getLogger(__name__)
+LOGGER.addHandler(logging.NullHandler())
 REGISTRY = {}
 
 
@@ -192,7 +196,10 @@ def office_to_pdf(source, target):
         shutil.copyfile(pdf, target)
 
 
-def execute(source, target_format, output_dir):
+def validate(source, target_format, output_dir):
+    """Sprawdza wybory i zwraca znormalizowane ścieżki oraz format."""
+    if not str(source).strip() or not str(output_dir).strip() or not str(target_format).strip():
+        raise ConversionError("Wybierz plik, format i katalog zapisu.")
     source, output_dir = Path(source), Path(output_dir)
     target_format = '.' + target_format.lower().lstrip('.')
     if not source.is_file():
@@ -202,6 +209,23 @@ def execute(source, target_format, output_dir):
     function = REGISTRY.get((source.suffix.lower(), target_format))
     if function is None:
         raise ConversionError('Nieobsługiwana para formatów.')
+    return source, target_format, output_dir
+
+
+def execute(source, target_format, output_dir):
+    started = perf_counter()
+    try:
+        source, target_format, output_dir = validate(source, target_format, output_dir)
+        result = _execute(source, target_format, output_dir)
+    except Exception:
+        LOGGER.exception('Błąd konwersji %s → %s (%.3f s)', source, target_format, perf_counter() - started)
+        raise
+    LOGGER.info('Zapisano %s (%.3f s)', result, perf_counter() - started)
+    return result
+
+
+def _execute(source, target_format, output_dir):
+    function = REGISTRY[(source.suffix.lower(), target_format)]
     # Konwersja do pliku tymczasowego; finalny plik tworzony wyłącznie bez nadpisania.
     try:
         with tempfile.TemporaryDirectory(dir=output_dir) as directory:
@@ -225,6 +249,10 @@ def execute(source, target_format, output_dir):
             return target
     except ConversionError:
         raise
+    except PermissionError as error:
+        raise ConversionError('Brak uprawnień do odczytu lub zapisu. Wybierz dostępny plik i katalog.') from error
+    except (zipfile.BadZipFile, KeyError, ET.ParseError) as error:
+        raise ConversionError('Uszkodzony dokument. Otwórz go w edytorze i zapisz ponownie.') from error
     except UnicodeError as error:
         raise ConversionError('Niepoprawne kodowanie. Zapisz plik wejściowy jako UTF-8.') from error
     except csv.Error as error:

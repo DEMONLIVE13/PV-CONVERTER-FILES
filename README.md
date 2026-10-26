@@ -1,6 +1,6 @@
-# Uniwersalny konwerter — do lab. 4
+# Uniwersalny konwerter plików — projekt końcowy
 
-Projekt obejmuje lab. 2–4: konwertery danych i dokumentów oraz interfejs Tkinter/ttk.
+Projekt obejmuje osiem kierunków konwersji z trzech grup (A, B, C), GUI Tkinter/ttk, CLI, walidację i testy.
 
 ## Instalacja
 
@@ -13,7 +13,7 @@ python -m venv .venv
 source .venv/bin/activate
 # Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-mkdir wyniki
+python -c "from pathlib import Path; Path('wyniki').mkdir(exist_ok=True)"
 python -m converter --list
 python -m converter examples/dane.csv json -o wyniki
 python -m converter examples/dane.json csv -o wyniki
@@ -35,7 +35,7 @@ Można ustawić `LIBREOFFICE_PATH` na pełną ścieżkę do soffice/soffice.com.
 PowerShell: `$env:LIBREOFFICE_PATH = 'C:\Program Files\LibreOffice\program\soffice.com'`.
 Brak programu daje kontrolowany błąd i kod zakończenia 1.
 
-## Interfejs graficzny — Lab. 4
+## Interfejs graficzny
 
 Uruchomienie (także z CMD w Windows):
 
@@ -112,3 +112,38 @@ staje się akapitem dokumentu.
 ## Dziennik zmian
 
 2026-10-14: implementacja etapu lab. 2 (CSV/JSON) i lab. 3 (DOCX/ODT/PDF), CLI i przykłady. Zapis rzeczywistych prac, nie historia wcześniejszych zajęć.
+
+## Zależności systemowe i rozwiązywanie problemów
+
+Do wszystkich ośmiu kierunków potrzebne są python-docx i LibreOffice Writer.
+LibreOffice jest osobną aplikacją — `pip install` go nie instaluje.
+Debian/Ubuntu: `sudo apt install python3-tk libreoffice-writer fonts-dejavu`.
+Windows/macOS: zainstaluj Python z Tcl/Tk oraz LibreOffice ze strony
+https://www.libreoffice.org/download/download-libreoffice/ .
+Przy braku ekranu użyj CLI; GUI wymaga sesji graficznej.
+Komunikaty w GUI i CLI wyjaśniają brak biblioteki/programu lub problem z zapisem.
+
+Błędy z tracebackiem i czas operacji są zapisywane po uruchomieniu przez
+`python -m converter` w `pv-converter.log` w katalogu tymczasowym systemu
+(ścieżkę pokaże `python -c "import tempfile; print(tempfile.gettempdir())"`).
+Log nie przechowuje treści konwertowanych dokumentów. Przy braku możliwości
+utworzenia logu program korzysta z konsoli.
+
+## Testy i oddanie
+
+```sh
+python -m unittest discover -s tests -v
+```
+
+Testy nie wymagają pytest. Test rzeczywistych PDF wymaga LibreOffice;
+testy GUI wymagają ekranu i Tkinter. Brak zależności oznacza jawne pominięcie
+odnośnego testu. Linux bez pulpitu: `xvfb-run -a python -m unittest discover -s tests -v`
+(po instalacji `xvfb` i `xauth`). Aktualne wyniki, zakres i ograniczenia:
+`RAPORT_TESTOW.md`; zgodność z wymaganiami: `WERYFIKACJA.md`.
+`OBRONA.md` wyjaśnia kod i zawiera scenariusz demonstracji.
+Przykładowe wyniki znajdują się w `dowody/`; testy tworzą własne pliki tymczasowe.
+
+Nie należy dołączać `.venv`, `__pycache__`, logów ani wielokrotnie generowanych wyników.
+Historia w `CHANGELOG.md` pochodzi z przekazanego archiwum; nowe prace opisano
+osobnym wpisem. Terminowość wcześniejszych etapów i samodzielność wyjaśnienia kodu
+są oceniane przez prowadzącą i nie wynikają z samego pakietu.

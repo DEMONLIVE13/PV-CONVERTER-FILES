@@ -27,3 +27,16 @@ Usunięto nieaktualną ścieżkę runtime z README.
 2026-10-20: uproszczono pakiet na życzenie użytkownika — usunięto testy, raport, skrypt demonstracyjny i wygenerowane dowody. Pozostawiono konwertery, przykładowe wejścia oraz dokumentację.
 
 2026-10-20: lab. 4 — GUI Tkinter/ttk, wybór pliku i katalogu, dynamiczna lista formatów, walidacja, konwersja w tle, komunikaty i ochrona istniejących plików.
+
+## 2026-10-26 — końcowa kontrola i uzupełnienie projektu
+
+- Porównano projekt z wymaganiami PDF i uruchomiono zastane testy (17 OK, 1 błąd).
+- Naprawiono dane wejściowe testu procesu PDF bez osłabiania walidacji dokumentów.
+- Wydzielono validate, dodano kontrolę pustych wyborów, logowanie błędów i czasu,
+  komunikaty o uprawnieniach oraz obsługę braku ekranu przy starcie GUI.
+- Dodano testy końcowe i integracyjne. Wynik: 28 OK, bez pominięć w środowisku testowym.
+- Wygenerowano aktualne dowody ośmiu konwersji, raport, tabelę zgodności i przewodnik obrony.
+- Uaktualniono README i przygotowano czysty pakiet bez cache i starych wyników.
+
+To wpis rzeczywiście wykonanej weryfikacji. Starsze wpisy zachowano z wejściowego ZIP-a;
+nie odtwarzano fikcyjnych commitów ani nie potwierdzano terminowości wcześniejszych laboratoriów.
