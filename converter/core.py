@@ -1,7 +1,8 @@
-import logging
-from time import perf_counter
 import csv
 import json
+import logging
+from logging.handlers import RotatingFileHandler
+from threading import Lock
 import os
 from pathlib import Path
 import shutil
@@ -15,8 +16,6 @@ class ConversionError(Exception):
     """Błąd, który można bezpiecznie pokazać użytkownikowi."""
 
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.addHandler(logging.NullHandler())
 REGISTRY = {}
 
 
@@ -196,10 +195,7 @@ def office_to_pdf(source, target):
         shutil.copyfile(pdf, target)
 
 
-def validate(source, target_format, output_dir):
-    """Sprawdza wybory i zwraca znormalizowane ścieżki oraz format."""
-    if not str(source).strip() or not str(output_dir).strip() or not str(target_format).strip():
-        raise ConversionError("Wybierz plik, format i katalog zapisu.")
+def _execute(source, target_format, output_dir):
     source, output_dir = Path(source), Path(output_dir)
     target_format = '.' + target_format.lower().lstrip('.')
     if not source.is_file():
@@ -209,23 +205,6 @@ def validate(source, target_format, output_dir):
     function = REGISTRY.get((source.suffix.lower(), target_format))
     if function is None:
         raise ConversionError('Nieobsługiwana para formatów.')
-    return source, target_format, output_dir
-
-
-def execute(source, target_format, output_dir):
-    started = perf_counter()
-    try:
-        source, target_format, output_dir = validate(source, target_format, output_dir)
-        result = _execute(source, target_format, output_dir)
-    except Exception:
-        LOGGER.exception('Błąd konwersji %s → %s (%.3f s)', source, target_format, perf_counter() - started)
-        raise
-    LOGGER.info('Zapisano %s (%.3f s)', result, perf_counter() - started)
-    return result
-
-
-def _execute(source, target_format, output_dir):
-    function = REGISTRY[(source.suffix.lower(), target_format)]
     # Konwersja do pliku tymczasowego; finalny plik tworzony wyłącznie bez nadpisania.
     try:
         with tempfile.TemporaryDirectory(dir=output_dir) as directory:
@@ -250,9 +229,7 @@ def _execute(source, target_format, output_dir):
     except ConversionError:
         raise
     except PermissionError as error:
-        raise ConversionError('Brak uprawnień do odczytu lub zapisu. Wybierz dostępny plik i katalog.') from error
-    except (zipfile.BadZipFile, KeyError, ET.ParseError) as error:
-        raise ConversionError('Uszkodzony dokument. Otwórz go w edytorze i zapisz ponownie.') from error
+        raise ConversionError('Brak uprawnień do odczytu lub zapisu. Wybierz dostępny plik i katalog zapisu.') from error
     except UnicodeError as error:
         raise ConversionError('Niepoprawne kodowanie. Zapisz plik wejściowy jako UTF-8.') from error
     except csv.Error as error:
@@ -261,3 +238,37 @@ def _execute(source, target_format, output_dir):
         raise ConversionError('LibreOffice przekroczył limit 60 sekund.') from error
     except Exception as error:
         raise ConversionError(f'Konwersja nie powiodła się: {error}') from error
+
+
+_LOG_LOCK = Lock()
+_LOGGER = logging.getLogger('pv_converter.errors')
+_LOGGER.addHandler(logging.NullHandler())
+_LOGGER.propagate = False
+
+
+def log_conversion_error():
+    """Zapisz wyjątek; brak dostępu do logu nie blokuje komunikatu błędu."""
+    try:
+        with _LOG_LOCK:
+            if not any(isinstance(h, RotatingFileHandler) for h in _LOGGER.handlers):
+                base = Path(os.environ.get('LOCALAPPDATA') or Path.home() / '.local' / 'state')
+                directory = base / 'PVConverter'
+                directory.mkdir(parents=True, exist_ok=True)
+                handler = RotatingFileHandler(directory / 'converter.log', maxBytes=1_000_000,
+                                              backupCount=2, encoding='utf-8')
+                handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+                _LOGGER.addHandler(handler)
+                _LOGGER.setLevel(logging.ERROR)
+        _LOGGER.exception('Nieudana konwersja')
+    except Exception:
+        # Nie zastępuj pierwotnego błędu problemem z dziennikiem.
+        pass
+
+
+def execute(source, target_format, output_dir):
+    """Wspólny punkt wejścia GUI/CLI z rejestrowaniem nieudanych operacji."""
+    try:
+        return _execute(source, target_format, output_dir)
+    except Exception:
+        log_conversion_error()
+        raise

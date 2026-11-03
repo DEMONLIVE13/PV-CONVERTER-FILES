@@ -1,4 +1,8 @@
-# Dziennik prac
+# Dziennik prac i zmian
+
+Poniższe historyczne wpisy zachowano z dostarczonego archiwum. Opisują kolejne
+stany robocze, a nie wyłącznie zawartość obecnej paczki. Dat etapów nie potwierdzono
+niezależnie. Aktualną zawartość i obsługę opisuje README.md.
 
 ## 2026-10-09 — laboratorium 2
 
@@ -8,7 +12,7 @@
 4. Dodanie danych demonstracyjnych, testów automatycznych i dokumentacji.
 5. Weryfikacja konwersji oraz kontrolowanego błędu JSON; raport w osobnym pliku.
 
-To dziennik jednego etapu, nie historia pracy nad całym projektem. Kolejne laboratoria należy dokumentować na bieżąco.
+Ten wpis opisuje etap laboratorium 2.
 
 ## 2026-10-14 — lab. 3
 
@@ -24,30 +28,34 @@ Usunięto nieaktualną ścieżkę runtime z README.
 
 2026-10-20: próby T1–T8 z rzeczywistym LibreOffice, pliki dowodowe i odczyt PDF; walidacja uszkodzonego DOCX/ODT, obsługa błędu uruchamiania, 20 testów.
 
-2026-10-20: uproszczono pakiet na życzenie użytkownika — usunięto testy, raport, skrypt demonstracyjny i wygenerowane dowody. Pozostawiono konwertery, przykładowe wejścia oraz dokumentację.
+2026-10-20: uproszczono pakiet — usunięto testy, raport, skrypt demonstracyjny i wygenerowane dowody. Pozostawiono konwertery, przykładowe wejścia oraz dokumentację.
 
 2026-10-20: lab. 4 — GUI Tkinter/ttk, wybór pliku i katalogu, dynamiczna lista formatów, walidacja, konwersja w tle, komunikaty i ochrona istniejących plików.
 
-## 2026-10-26 — końcowa kontrola i uzupełnienie projektu
 
-- Porównano projekt z wymaganiami PDF i uruchomiono zastane testy (17 OK, 1 błąd).
-- Naprawiono dane wejściowe testu procesu PDF bez osłabiania walidacji dokumentów.
-- Wydzielono validate, dodano kontrolę pustych wyborów, logowanie błędów i czasu,
-  komunikaty o uprawnieniach oraz obsługę braku ekranu przy starcie GUI.
-- Dodano testy końcowe i integracyjne. Wynik: 28 OK, bez pominięć w środowisku testowym.
-- Wygenerowano aktualne dowody ośmiu konwersji, raport, tabelę zgodności i przewodnik obrony.
-- Uaktualniono README i przygotowano czysty pakiet bez cache i starych wyników.
+## 2026-10-30 - kontrola wersji końcowej
 
-To wpis rzeczywiście wykonanej weryfikacji. Starsze wpisy zachowano z wejściowego ZIP-a;
-nie odtwarzano fikcyjnych commitów ani nie potwierdzano terminowości wcześniejszych laboratoriów.
+Aktualna paczka zawiera testy i raport; wcześniejszy wpis o ich usunięciu opisuje
+poprzedni stan roboczy. Daty we wcześniejszych wpisach i README są deklaracjami
+z dostarczonego archiwum i nie zostały niezależnie potwierdzone.
+Naprawiono dane testowe procesu PDF, rozdzielono scenariusze kodu błędu,
+braku PDF i timeoutu. Dodano test uszkodzonego ODT, komunikatu braku uprawnień
+i zapisu logu. Dodano rotacyjny dziennik wyjątków wspólny dla GUI i CLI.
+Zaktualizowano README i raport, usunięto z paczki cache i powielone wyniki.
 
-## 2026-10-26 — uporządkowanie pakietu według PDF
+## Wpis przeniesiony z wcześniejszego README
 
-- Przeniesiono raport i przewodnik obrony do docs/; README zawiera kompletną
-  instrukcję, macierz par, ograniczenia, oczekiwane wyniki i źródła.
-- Usunięto osobną tabelę zgodności dublującą README oraz surowe logi testów.
-- Ograniczono dowody do JSON, DOCX, ODT i dwóch PDF; usunięto kopie wejść
-  oraz tekstowe zrzuty PDF. Nazwy PDF wskazują format źródłowy.
-- Uporządkowano nazwy modułów testowych i usunięto cztery powtarzające się
-  przypadki; pozostałe 24 testy przeszły bez pominięć, w tym GUI i PDF.
-- Rozszerzono .gitignore o logi i pliki systemowe. Historia Git została zachowana.
+2026-10-14: implementacja etapu lab. 2 (CSV/JSON) i lab. 3 (DOCX/ODT/PDF), CLI i przykłady. Zapis rzeczywistych prac, nie historia wcześniejszych zajęć.
+
+Wpis częściowo pokrywa się z etapami opisanymi wyżej; zachowano go jako zapis
+źródłowy, bez tworzenia nowej wersji historii prac.
+
+## 2026-11-03 - uporządkowanie dokumentacji
+
+- Zastąpiono historię w README odsyłaczem do tego pliku.
+- Uporządkowano sekcje README i rozdzielono instalację Windows od Linux/macOS.
+- Dodano strukturę paczki i opis zachowanych wyników w dowody/README.md.
+- Uzupełniono deklarację pomocy AI w dokumentacji.
+- Kod aplikacji, dane przykładowe i testy pozostały bez zmian.
+
+- Usunięto z dokumentacji porady dotyczące przygotowania do obrony.

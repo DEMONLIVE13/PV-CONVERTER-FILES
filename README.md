@@ -1,139 +1,175 @@
-# Uniwersalny konwerter plików
+# Uniwersalny konwerter plików - Projekt 1
 
-Aplikacja Python 3 + Tkinter/ttk realizująca projekt „Programowanie V”.
-Obsługuje osiem kierunków z trzech grup: dane (A), tekst/dokumenty (B)
-i dokumenty/PDF (C). Udostępnia GUI oraz CLI.
+Autor: **Szymon Głogowski**.
+Aplikacja desktopowa w Pythonie z GUI Tkinter/ttk i dodatkowym interfejsem konsolowym.
+Obsługuje osiem kierunków konwersji danych i dokumentów z trzech grup.
 
-## Wymagania i instalacja
+## Instalacja
 
-Python 3.10+, Tkinter, python-docx oraz LibreOffice Writer do obu konwersji PDF.
-LibreOffice jest osobnym programem i nie jest instalowany przez pip.
+Wymagania: Python 3.10+ z Tkinter/ttk, python-docx (requirements.txt).
+LibreOffice jest wymagany dla obu kierunków do PDF; pozostałe konwersje go nie potrzebują.
+
+Polecenia uruchamiaj w wypakowanym katalogu projektu, zawierającym README.md.
+
+Windows (PowerShell), bez potrzeby aktywacji środowiska:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m converter
+```
+
+Przy kolejnych uruchomieniach wystarczy ostatnie polecenie.
+W przykładach poniżej zastąp `python` przez `.\.venv\Scripts\python.exe`,
+jeżeli środowisko nie jest aktywowane.
+
+Linux/macOS:
 
 ```sh
 python -m venv .venv
-# Linux/macOS:
 source .venv/bin/activate
-# Windows PowerShell zamiast powyższej linii:
-# .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-python -m converter
 ```
 
-Debian/Ubuntu: `sudo apt install python3-tk libreoffice-writer fonts-dejavu`.
-Windows: instalator Pythona z opcją Tcl/Tk oraz [LibreOffice](https://www.libreoffice.org/download/download-libreoffice/).
-macOS: Python z działającym Tkinterem i LibreOffice w katalogu Applications.
-GUI wymaga sesji graficznej. Bez ekranu można korzystać z CLI.
-
-Program szuka LibreOffice w PATH i typowych lokalizacjach Windows/macOS.
-Można ustawić `LIBREOFFICE_PATH` na plik wykonywalny:
-
-```powershell
-$env:LIBREOFFICE_PATH = 'C:\Program Files\LibreOffice\program\soffice.com'
-```
-
-Brak zależności daje komunikat z instrukcją rozwiązania; CLI zwraca kod 1.
-
-## Obsługa
-
-W GUI wybierz istniejący plik wejściowy, katalog zapisu i format docelowy.
-Lista formatów zależy od rozszerzenia. Przycisk **Konwertuj** jest dostępny
-po poprawnym wyborze; konwersja działa w tle, a okno pokazuje status i wynik
-lub komunikat błędu. Dostępne jest też `python -m converter --gui`.
-
-Przykłady CLI (wykonywane w katalogu projektu):
+Przykłady uruchomienia z konsoli (w aktywnym środowisku lub z jego interpreterem).
+Najpierw utwórz katalog wyników:
 
 ```sh
 python -c "from pathlib import Path; Path('wyniki').mkdir(exist_ok=True)"
+```
+
+```sh
 python -m converter --list
 python -m converter examples/dane.csv json -o wyniki
 python -m converter examples/dane.json csv -o wyniki
 python -m converter examples/tekst.txt docx -o wyniki
-python -m converter examples/tekst.txt odt -o wyniki
 python -m converter wyniki/tekst.docx txt -o wyniki
+python -m converter examples/tekst.txt odt -o wyniki
 python -m converter wyniki/tekst.odt txt -o wyniki
+```
+
+Demonstracja narzędzia zewnętrznego po zainstalowaniu LibreOffice:
+
+```sh
 python -m converter wyniki/tekst.docx pdf -o wyniki
 python -m converter wyniki/tekst.odt pdf -o wyniki
 ```
 
-Istniejące pliki są zachowywane. Nowy wynik otrzymuje przyrostek `_1`, `_2` itd.
-Katalog wyjściowy musi istnieć i pozwalać na zapis.
+Program szuka LibreOffice w PATH i typowych lokalizacjach Windows/macOS.
+Można ustawić `LIBREOFFICE_PATH` na pełną ścieżkę do soffice/soffice.com.
+PowerShell: `$env:LIBREOFFICE_PATH = 'C:\Program Files\LibreOffice\program\soffice.com'`.
+Brak programu daje kontrolowany błąd i kod zakończenia 1.
 
-## Obsługiwane pary i ograniczenia
+## Interfejs graficzny
 
-| Grupa | Wejście | Wyjście | Semantyka i ograniczenia |
-|---|---|---|---|
-| A | CSV | JSON | Przecinek; pierwszy wiersz to niepuste, unikalne nagłówki; minimum jeden rekord |
-| A | JSON | CSV | Niepusta lista niepustych obiektów, te same klucze, wartości wyłącznie tekstowe |
-| B | TXT | DOCX | Każda linia, również pusta i końcowa, staje się akapitem |
-| B | DOCX | TXT | Akapity głównej treści; bez tabel, nagłówków strony, przypisów i formatowania |
-| B | TXT | ODT | Linie jako akapity; zachowanie spacji i tabulatorów |
-| B | ODT | TXT | Akapity i nagłówki treści, także z tabel; bez układu tabel i formatowania |
-| C | DOCX | PDF | LibreOffice; wygląd zależy od czcionek i wersji programu |
-| C | ODT | PDF | LibreOffice; wygląd zależy od czcionek i wersji programu |
-
-Tekst jest zapisywany jako UTF-8; na wejściu dopuszczalny BOM.
-Kolejność kolumn pochodzi z nagłówków CSV lub pierwszego obiektu JSON.
-Puste pola to `""`; liczby, null, listy i obiekty jako wartości są odrzucane.
-Tekstowe wartości chronią np. zera wiodące kodów. CSV bez rekordów jest
-odrzucany, ponieważ pusta lista JSON nie zachowałaby nagłówków.
-Konwersje tekstowe nie zachowują złożonego formatowania, makr ani wykresów.
-
-## Przykłady i oczekiwane wyniki
-
-| Dane wejściowe | Oczekiwany rezultat |
-|---|---|
-| examples/dane.csv | JSON z tymi samymi nagłówkami, polskimi znakami, pustym polem i przecinkiem w wartości |
-| examples/dane.json | CSV z kolumnami w kolejności pierwszego obiektu i wartościami tekstowymi |
-| examples/tekst.txt | DOCX/ODT z polskimi znakami i pustym akapitem; po powrocie do TXT identyczny tekst |
-| examples/bledny.json | Kontrolowany błąd z linią i kolumną; brak pliku wynikowego |
-
-Minimalne pliki dowodowe i ich opis: [dowody/README.md](dowody/README.md).
-Własne wyniki zapisuj w ignorowanym przez Git katalogu `wyniki/`.
-
-## Architektura i błędy
-
-`converter/core.py` zawiera rejestr dekoratorów, walidację, konwertery i wspólny
-wyjątek `ConversionError`. `gui.py` obsługuje wyłącznie interfejs, wątek roboczy
-i kolejkę wyników; `__main__.py` uruchamia CLI lub GUI. Nowa funkcja z dekoratorem
-`@converter('.wejście', '.wyjście')` automatycznie uzupełnia listę GUI.
-
-Dane obsługują standardowe csv/json, DOCX biblioteka python-docx, ODT standardowe
-ZIP/XML. LibreOffice działa z osobnym profilem, listą argumentów, `shell=False`
-i limitem 60 s. Sprawdzane są kod zakończenia i wynik PDF. Konwersja powstaje
-najpierw w katalogu tymczasowym; finalna nazwa jest tworzona z trybem `xb`.
-
-Po uruchomieniu przez `python -m converter` błędy z tracebackiem i czas operacji
-trafiają do `pv-converter.log` w katalogu tymczasowym systemu. Jego lokalizację
-pokaże `python -c "import tempfile; print(tempfile.gettempdir())"`.
-Przy braku możliwości utworzenia logu program korzysta z konsoli.
-
-## Testy i dokumentacja
+Uruchomienie (także z CMD w Windows):
 
 ```sh
-python -m unittest discover -s tests -v
+python -m converter
 ```
 
-Testy nie wymagają pytest. Test rzeczywistych PDF wymaga LibreOffice;
-testy GUI wymagają Tkinter i ekranu. Brak zależności systemowej oznacza jawne
-pominięcie odpowiedniego testu. Linux bez pulpitu: po instalacji `xvfb` i `xauth`
-użyj `xvfb-run -a python -m unittest discover -s tests -v`.
+Można również użyć `python -m converter --gui`. Dotychczasowe komendy CLI nadal działają.
+Wybierz plik, istniejący katalog zapisu i format z listy, a następnie kliknij **Konwertuj**.
+Lista formatów korzysta z rejestru i pokazuje wyłącznie dozwolone kierunki dla rozszerzenia wejścia.
+Przycisk jest zablokowany, dopóki wybory nie są poprawne. Konwersja działa w osobnym wątku;
+interfejs pokazuje postęp, wynik lub czytelny błąd. Podczas pracy wybory są zablokowane.
+Istniejące pliki nie są nadpisywane — wynik dostaje przyrostek `_1`, `_2` itd.
 
-- [Raport testów](docs/RAPORT_TESTOW.md): wynik, minimalna macierz i ograniczenia weryfikacji.
-- [Przewodnik do obrony](docs/OBRONA.md): przepływ, decyzje i scenariusz demonstracji.
-- [Dziennik prac](CHANGELOG.md): etapy i późniejsze zmiany; historia jest też w Git.
+Tkinter jest składnikiem standardowej instalacji Pythona w Windows (opcja Tcl/Tk).
+Na Linux może wymagać pakietu `python3-tk`. GUI wymaga środowiska graficznego.
+PDF wymaga zainstalowanego LibreOffice, tak samo jak w CLI. W CMD można ustawić:
 
-Struktura: `converter/` — kod; `tests/` — testy; `examples/` — wejścia;
-`dowody/` — mały zestaw wyników; `docs/` — dokumentacja dodatkowa.
-Repozytorium nie zawiera środowiska wirtualnego, cache ani surowych logów testów.
+```bat
+set "LIBREOFFICE_PATH=C:\Program Files\LibreOffice\program\soffice.com"
+python -m converter
+```
 
-## Autorstwo i źródła
+Do demonstracji: wybierz `examples/dane.csv`, sprawdź, że lista zawiera tylko `.json`,
+wykonaj konwersję i otwórz wynik we wskazanym katalogu. Powtórz operację, aby zobaczyć
+bezpieczny przyrostek nazwy. Wybierz `examples/tekst.txt`, aby pokazać zmianę listy na
+`.docx` i `.odt`. `examples/bledny.json` pozwala pokazać kontrolowany błąd.
 
-Autor/student: **Szymon Głogowski**. Kod i dokumentacja powstały z pomocą
-**OpenAI Codex**; osoba oddająca projekt powinna rozumieć wykorzystany kod.
+## Macierz formatów
 
-- Zakres: dostarczony PDF „Projekt 1. Uniwersalny konwerter plików”.
-- Python: [csv](https://docs.python.org/3/library/csv.html), [json](https://docs.python.org/3/library/json.html), [subprocess](https://docs.python.org/3/library/subprocess.html).
-- [Tkinter](https://docs.python.org/3/library/tkinter.html).
-- [python-docx](https://python-docx.readthedocs.io/).
-- [ODF 1.2](https://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html).
-- [Parametry LibreOffice](https://help.libreoffice.org/latest/en-US/text/shared/guide/start_parameters.html).
+| Wejście | Wyjście | Ograniczenia |
+|---|---|---|
+| CSV | JSON | Przecinek, pierwszy wiersz to niepuste unikalne nagłówki, minimum jeden rekord |
+| JSON | CSV | Niepusta lista niepustych obiektów, jednakowe klucze, wartości wyłącznie tekstowe |
+| TXT | DOCX | Linia tekstu staje się akapitem, także pusta |
+| DOCX | TXT | Akapity głównej treści, bez tabel, nagłówków, przypisów i formatowania |
+| TXT | ODT | Linie jako akapity, zachowane spacje i tabulatory |
+| ODT | TXT | Akapity i nagłówki treści, także z tabel; bez układu tabel i formatowania |
+| DOCX | PDF | Wymaga LibreOffice; układ zależy m.in. od czcionek |
+| ODT | PDF | Wymaga LibreOffice; układ zależy m.in. od czcionek |
+
+Tekst: UTF-8, na wejściu dopuszczalny BOM. Kolejność kolumn pochodzi z nagłówka CSV lub pierwszego obiektu JSON. Puste wartości to `""`; null, liczby, listy i obiekty jako wartości są odrzucane. CSV bez rekordów jest odrzucany, ponieważ pusta lista JSON nie zachowałaby nagłówków.
+Katalog wyjściowy musi istnieć. Konflikt nazw daje bezpieczny przyrostek `_1`, `_2` itd.; istniejące pliki nie są nadpisywane.
+
+## Dane przykładowe
+
+`examples/dane.csv` i `examples/dane.json`: polskie znaki, puste pole i przecinek w wartości.
+`examples/tekst.txt`: tekst z polskimi znakami oraz pustym akapitem.
+`examples/bledny.json`: niepoprawny JSON do sprawdzenia komunikatu błędu.
+
+Reguła akapitów TXT: podział po `\n`; każda część, również pusta i końcowa,
+staje się akapitem dokumentu.
+
+## Oczekiwane wyniki przykładów
+
+- `dane.csv` → JSON: lista obiektów, nagłówki jako klucze, tekst i puste wartości zachowane.
+- `dane.json` → CSV: nazwy i kolejność kolumn z pierwszego obiektu, separator przecinek.
+- `tekst.txt` → DOCX/ODT: każda linia jako akapit, polskie litery zachowane;
+  konwersja zwrotna odtwarza tekst bez formatowania.
+- `bledny.json` → CSV: kontrolowany komunikat z linią i kolumną, bez wyniku.
+- DOCX/ODT → PDF: otwieralny PDF z treścią; wymagany LibreOffice i właściwe czcionki.
+
+## Testowanie i dziennik błędów
+
+Uruchom: `python -m unittest discover -s tests -v`.
+Aktualne wyniki i ograniczenia weryfikacji: `RAPORT_TESTOW.md`.
+Błędy konwersji są zapisywane z tracebackiem w UTF-8:
+- Windows: `%LOCALAPPDATA%/PVConverter/converter.log`;
+- przy braku LOCALAPPDATA: `~/.local/state/PVConverter/converter.log`.
+Log ma limit 1 MB i dwie kopie rotacyjne. Powstaje przy pierwszym błędzie.
+Brak możliwości zapisu logu nie blokuje obsługi pierwotnego błędu.
+Log może zawierać ścieżki plików.
+GUI pokazuje pary z rejestru. Dostępność LibreOffice i python-docx jest sprawdzana
+przy wykonywaniu odpowiedniego kierunku; brak zależności daje instrukcję rozwiązania.
+
+## Architektura
+
+`converter/core.py`: rejestr dekoratorów, konwertery, walidacja, wyjątek `ConversionError`.
+`converter/__main__.py`: argumenty CLI i komunikaty. `converter/gui.py`: okno Tkinter/ttk korzystające z `available_targets()` i `execute()`; kolejka przekazuje wynik z wątku roboczego do głównego wątku GUI.
+Dodanie kierunku: funkcja z dekoratorem `@converter('.wejście', '.wyjście')`.
+DOCX obsługuje python-docx, ODT standardowe ZIP/XML, dane standardowe csv/json.
+
+Proces PDF: wykrycie programu, osobny profil LibreOffice, lista argumentów w `subprocess.run`, `shell=False`, limit 60 s, sprawdzenie kodu zakończenia, istnienia i nagłówka PDF. Konwersja odbywa się w katalogu tymczasowym przed bezpiecznym zapisaniem wyniku.
+
+## Struktura projektu
+
+- `converter/` - kod aplikacji: konwertery, GUI i obsługa konsoli.
+- `examples/` - cztery wejściowe pliki demonstracyjne.
+- `tests/` - testy automatyczne.
+- `dowody/` - zachowane wyniki konwersji; opis w [dowody/README.md](dowody/README.md).
+- `requirements.txt` - zależności instalowane przez pip.
+- [RAPORT_TESTOW.md](RAPORT_TESTOW.md) - wyniki oraz ograniczenia weryfikacji.
+- [CHANGELOG.md](CHANGELOG.md) - dziennik prac i historia zmian.
+
+README opisuje aktualną wersję. Historyczne etapy opisano wyłącznie w CHANGELOG.md.
+
+## Źródła i autorstwo
+
+- Zakres: dostarczony `projekt-1-konwerter (2).pdf`.
+- Python: https://docs.python.org/3/library/csv.html, https://docs.python.org/3/library/json.html, https://docs.python.org/3/library/subprocess.html
+- Tkinter: https://docs.python.org/3/library/tkinter.html
+- python-docx: https://python-docx.readthedocs.io/
+- ODF: https://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html
+- LibreOffice: https://help.libreoffice.org/latest/en-US/text/shared/guide/start_parameters.html
+- Pomoc AI: kod i dokumentacja przygotowane z pomocą OpenAI Codex.
+
+Pomoc AI przy aktualizacji 30.10.2026: OpenAI Codex - przegląd wymagań,
+naprawa testów procesu, logowanie błędów, dokumentacja i sprawdzenie konwersji.
+
+Pomoc AI przy aktualizacji 03.11.2026: OpenAI Codex - uporządkowanie dokumentacji,
+porównanie kompletności paczki z instrukcją i ponowne uruchomienie testów.
+

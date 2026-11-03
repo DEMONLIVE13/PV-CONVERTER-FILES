@@ -1,16 +1,17 @@
-# Minimalne dowody konwersji
+# Zachowane wyniki konwersji
 
-Wejścia znajdują się w `../examples/`. Zachowano po jednym wyniku każdej grupy
-oraz oba PDF, aby można było obejrzeć rezultat bez uruchamiania aplikacji.
+Pliki pochodzą z dostarczonego archiwum. Pozostawiono ich oryginalne nazwy.
+Wejścia demonstracyjne znajdują się w ../examples/. Raport i ograniczenia
+weryfikacji znajdują się w ../RAPORT_TESTOW.md.
 
-| Plik | Wejście i konwersja | Oczekiwany wynik |
-|---|---|---|
-| dane.json | examples/dane.csv → JSON (grupa A) | Kolejność kolumn, polskie znaki i puste pole bez zmian |
-| tekst.docx | examples/tekst.txt → DOCX (grupa B) | Linie jako akapity, polskie znaki, pusty akapit |
-| tekst.odt | examples/tekst.txt → ODT (grupa B) | Te same akapity, spacje i tabulatory |
-| z-docx.pdf | tekst.docx → PDF (grupa C) | Czytelny tekst z polskimi znakami |
-| z-odt.pdf | tekst.odt → PDF (grupa C) | Czytelny tekst z polskimi znakami |
+| Pliki | Co sprawdzić |
+|---|---|
+| dane.json, dane_1.json | Wyniki CSV -> JSON; lista obiektów, polskie znaki, puste pole i kolejność kluczy. Oba pliki zawierają te same dane. |
+| dane.csv | Wynik JSON -> CSV; nagłówki oraz pola zgodne z przykładem. |
+| tekst.docx, tekst.odt | Wyniki konwersji tekstu do dokumentów; polskie znaki i podział na akapity. |
+| tekst.txt, tekst_1.txt | Wyniki zwrotne do tekstu; porównaj treść z examples/tekst.txt. |
+| tekst.pdf, tekst_1.pdf | Zachowane PDF-y z dokumentów; sprawdź otwieranie i widoczną treść. |
 
-Wyniki wygenerowano 26.10.2026. Konwersje odwrotne CSV i TXT sprawdzają testy;
-usunięto ich kopie identyczne z przykładami. Odczyt PDF przez pdftotext potwierdził
-polskie znaki. Szczegóły i ograniczenia: `../docs/RAPORT_TESTOW.md`.
+Przyrostek _1 wynika z ochrony istniejącej nazwy. Sama nazwa nie identyfikuje
+kierunku konwersji. Kierunek nowych prób ustalaj na podstawie pliku wejściowego
+lub zapisuj wyniki w osobnych katalogach.
