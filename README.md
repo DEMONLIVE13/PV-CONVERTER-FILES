@@ -158,7 +158,7 @@ Proces PDF: wykrycie programu, osobny profil LibreOffice, lista argumentów w `s
 README opisuje aktualną wersję. Historyczne etapy opisano wyłącznie w CHANGELOG.md.
 
 ## Źródła i autorstwo
-
+Autor: **Szymon Głogowski**.
 - Zakres: dostarczony `projekt-1-konwerter (2).pdf`.
 - Python: https://docs.python.org/3/library/csv.html, https://docs.python.org/3/library/json.html, https://docs.python.org/3/library/subprocess.html
 - Tkinter: https://docs.python.org/3/library/tkinter.html
